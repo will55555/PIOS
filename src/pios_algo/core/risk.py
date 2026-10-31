@@ -61,8 +61,20 @@ def bound_violations(spec: StrategySpec, bounds: PlatformBounds = A6_BOUNDS) -> 
 # ------------------------------------------------------------------ account-wide limits (§2A)
 
 
+class SmallAccountTier(BaseModel):
+    """Looser exposure caps while equity is small (Will 2026-10-31): one position per sleeve is
+    otherwise impossible at ~$150 equity. Reverts to the normal caps once equity reaches ``equity_below``."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    equity_below: float = Field(gt=0)
+    max_symbol_exposure_pct: float = Field(gt=0, le=100)
+    max_group_exposure_pct: float = Field(gt=0, le=100)
+
+
 class AccountLimits(BaseModel):
-    """Tenant-set account-wide limits. Every field must be set before live starts (E13)."""
+    """Tenant-set account-wide limits. Every field must be set before live starts (E13).
+    ``small_account`` is optional and only loosens the two exposure caps below its equity threshold."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -72,9 +84,18 @@ class AccountLimits(BaseModel):
     max_group_exposure_pct: float | None = Field(default=None, gt=0, le=100)
     block_same_symbol_across_strategies: bool | None = None
     daily_loss_stop_pct: float | None = Field(default=None, gt=0, le=100)
+    small_account: SmallAccountTier | None = None
 
     def unset(self) -> list[str]:
-        return [name for name, value in self if value is None]
+        return [name for name, value in self if value is None and name != "small_account"]
+
+    def exposure_caps(self, equity: float) -> tuple[float, float]:
+        """(symbol %, group %) in force at this equity."""
+        assert self.max_symbol_exposure_pct is not None and self.max_group_exposure_pct is not None
+        tier = self.small_account
+        if tier is not None and equity < tier.equity_below:
+            return tier.max_symbol_exposure_pct, tier.max_group_exposure_pct
+        return self.max_symbol_exposure_pct, self.max_group_exposure_pct
 
 
 @dataclass(frozen=True)
@@ -175,10 +196,11 @@ def check_entry(
     risk_pct = spec.risk.a_plus_risk_pct if (a_plus and spec.risk.a_plus_risk_pct) else spec.risk.risk_per_trade_pct
     per_share_risk = intent.entry_limit - intent.stop
     group = group_of(intent.symbol, spec.asset_class, sectors)
-    sym_room = state.equity * limits.max_symbol_exposure_pct / 100 - sum(
+    sym_pct, grp_pct = limits.exposure_caps(state.equity)
+    sym_room = state.equity * sym_pct / 100 - sum(
         h.value for h in state.holdings if h.symbol == intent.symbol
     )
-    grp_room = state.equity * limits.max_group_exposure_pct / 100 - sum(
+    grp_room = state.equity * grp_pct / 100 - sum(
         h.value for h in state.holdings if h.group == group
     )
     caps = {

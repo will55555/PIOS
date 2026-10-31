@@ -12,6 +12,7 @@ from pios_algo.core.risk import (
     AccountState,
     Holding,
     LiveNotReady,
+    SmallAccountTier,
     assert_live_ready,
     bound_violations,
     check_entry,
@@ -229,3 +230,12 @@ def test_live_refuses_l0_and_missing_signal_rate():
 def test_tenant_config_parses():
     cfg = TenantConfig(tenant_id="will", account_limits=E13)
     assert cfg.account_limits.unset() == []
+
+
+def test_small_account_tier_loosens_exposure_until_threshold():
+    small = E13.model_copy(update={"small_account": SmallAccountTier(
+        equity_below=1000, max_symbol_exposure_pct=70, max_group_exposure_pct=80)})
+    assert small.unset() == []
+    assert small.exposure_caps(150) == (70, 80) and small.exposure_caps(1000) == (35, 50)
+    d = check_entry(intent(), spec(), state(), small, {"AAPL": "tech"})
+    assert d.passed and d.notional > 150 * 0.35 and d.notional <= 150 * 0.70 + 0.01

@@ -43,3 +43,7 @@ Built by Claude in the planning chat; copied into SDE.
 - With equity ≈ $150 and Core ≈ $100, the 35% per-symbol limit caps one MOM-01 position at ≈ $52 (half of Core's cash). The scheduled stocks run does not apply the 35% rule (engine-only), so live behaviour today is unchanged.
 - MOM-01 has no validation run → `expected_signals_per_week` unset → the engine will refuse MOM-01 live until it is measured (backtest plan v3) or Will sets an interim value.
 - VOL-01 has no monthly loss cap; A6 requires one on every sleeve (≤ 50%) before VOL-01 moves onto the engine.
+
+**Follow-up (Will 11:20)**
+- Small-account exposure tier: below $1,000 equity the caps are 70% per symbol / 80% per group; from $1,000 they revert to 35% / 50% (`AccountLimits.small_account`, set in `will-strategies/config/tenant.json`). Reason: Will chose to raise the caps while the account is small → MOM-01 can use Core's full cash again (cash binds, ≈ $100).
+- MOM-01 spec keeps `max_concurrent_positions = 1`: Core cash (~$100) funds one position at 1% risk anyway; the account ceiling stays 3 for when Core grows (revisit at Core ≥ ~$300).
