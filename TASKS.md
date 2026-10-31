@@ -4,7 +4,7 @@
 | --- | --- | --- | --- |
 | PIOS-001 | Scaffold the repo | Done | 2026-10-31. Will ran the checks on Python 3.15.2: 25 tests passed, ruff and mypy strict clean. Scope and decisions: ADR-020. |
 | PIOS-002 | Design the tables for each schema layer | Blocked | No DDL for `pios_schema_v1.0.0` was found. Rebuild module by module from the layer summary and ADRs 016, 017, 019. Blocked on the learning gate. |
-| PIOS-003 | Add ADR-020 to the PIOS Notion page | Open | Written in this repo first. |
+| PIOS-003 | Add ADR-020 to the PIOS Notion page | Done | 2026-10-31, as a child page of PIOS. |
 | PIOS-004 | Pick the remote with pios-algo | Open | The Terra GitHub org does not exist yet. |
 | PIOS-005 | Bring in pios-algo by subtree | Later | After PIOS has a skeleton worth joining and step 2 is pulled. Does not hold up algo steps 3–9. |
 | PIOS-006 | Create the Jenkins job | Later | The Jenkinsfile is dormant until then. |

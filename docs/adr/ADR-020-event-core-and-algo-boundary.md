@@ -4,7 +4,7 @@
 
 **Service:** PIOS
 
-**ADR sequence:** PIOS ADRs — 020 (local sequence). Written in this repo first; not yet on the PIOS Notion page.
+**ADR sequence:** PIOS ADRs — 020 (local sequence). Written in this repo first, then added as a child page of the PIOS Notion page.
 
 **Related:** ADR-005, ADR-011, ADR-012, ADR-013, ADR-014, ADR-016, ADR-019; algo ADR-002 v3, algo ADR-003
 

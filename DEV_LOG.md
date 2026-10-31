@@ -6,6 +6,8 @@
 ### Goal
 Give pios-algo a repo to join later without slowing the algo build.
 
+First commit: `050ecc5`. To reproduce the checks, follow "Run the checks" in `README.md`; `uv self update` comes first, because the older uv only offered the 3.15 beta.
+
 ### Decisions (Will)
 - Learning gate stays, so scaffold only.
 - PIOS owns its envelope; algo events cross through a translator. See ADR-020 for why `pios_algo.events` could not be adopted.

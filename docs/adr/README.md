@@ -1,6 +1,6 @@
 # PIOS ADRs
 
-Notion is the source for ADRs 001–019: https://app.notion.com/p/36f89370d4978140a5a9d14f76ddaefd. ADR-020 starts here. Accepted ADRs are immutable; a change needs a new ADR.
+Notion is the source for ADRs 001–019: https://app.notion.com/p/36f89370d4978140a5a9d14f76ddaefd. ADR-020 started here and is mirrored there. Accepted ADRs are immutable; a change needs a new ADR.
 
 | ADR | Decision | Status |
 | --- | --- | --- |
