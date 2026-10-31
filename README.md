@@ -6,18 +6,18 @@ Terra's multi-tenant, bring-your-own-strategy algo trading platform — the PIOS
 - **Merge-ready brick.** Can be merged into the PIOS repo later; the engine and watchdog always stay separate processes (docs/adr/ADR-003).
 - **Event-sourced.** Every signal, order, fill and decision is an append-only event; positions and ledgers are projections.
 
-Design docs (Algo Trading Project): `claude/pios-algo-architecture.md` v0.5, ADR-001 (Accepted), ADR-002 v3 (Accepted), `claude/pios-algo-build-step1-brief.md`.
+Design docs: `docs/pios-algo-architecture.md` v0.6, `docs/pios-algo-build-step1-brief.md`, `docs/adr/`. ADR-001 and ADR-002 v3 (both Accepted) are in the Algo Trading Project. State and planning notes are private: `will-strategies/docs/`.
 
 ## Status — build step 1 (2026-10-31)
 | Piece | Where |
 | --- | --- |
-| Event envelope v1 (`tenant_id`, `risk_check_id`, `param_hash`, `autonomy_level`, `broker`, `account`) | `src/pios_algo/events/envelope.py` |
+| Event envelope v1 (`tenant_id`, `risk_check_id`, `param_hash`, `autonomy_level`, `broker`, `account`, `correlation_id`, `causation_id`) | `src/pios_algo/events/envelope.py` |
 | JSON Schema (cross-language contract) | `schemas/event-envelope.v1.json` |
 | `EventStore` port (append-only, idempotent, optimistic concurrency) | `src/pios_algo/events/store.py` |
 | SQLite store, one file per tenant, `algo_` tables, append-only triggers | `src/pios_algo/events/sqlite_store.py` |
 | Legacy JSONL upcaster + importer | `src/pios_algo/events/upcast.py`, `scripts/import_legacy.py` |
 
-Envelope rules enforced in code: timezone-aware `ts`; no NaN/inf anywhere in `payload`; `algo.OrderPlaced` in live/paper needs `meta.risk_check_id`; `algo.AutonomyLevelChanged`, `algo.FreezeSet`, `algo.FreezeLifted`, `algo.KillSwitchReset` only from `source="will"`.
+Envelope rules enforced in code: timezone-aware `ts`; no NaN/inf anywhere in `payload`; `algo.OrderPlaced` in live/paper needs `meta.risk_check_id`; `algo.AutonomyLevelChanged`, `algo.FreezeSet`, `algo.FreezeLifted`, `algo.KillSwitchReset` only from `source="will"`. The store refuses any event version it has no upcast path for, on read and on append (PIOS ADR-013).
 
 ## Status — build step 2 (2026-10-31)
 | Piece | Where |

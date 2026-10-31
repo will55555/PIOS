@@ -9,6 +9,7 @@ from pios_algo.events.store import (
     EventStore,
     StoredEvent,
     TenantMismatch,
+    UnknownEventVersion,
 )
 
 __all__ = [
@@ -23,5 +24,6 @@ __all__ = [
     "SqliteEventStore",
     "StoredEvent",
     "TenantMismatch",
+    "UnknownEventVersion",
     "export_json_schema",
 ]

@@ -9,7 +9,7 @@ description = "Terra's multi-tenant, bring-your-own-strategy algo trading platfo
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "Proprietary — Terra" }
-dependencies = ["pydantic>=2.6,<3"]
+dependencies = ["pydantic>=2.6,<3", "tzdata"]
 
 [project.optional-dependencies]
 dev = ["pytest>=8", "ruff>=0.6", "mypy>=1.10"]

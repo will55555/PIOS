@@ -1,10 +1,19 @@
 from __future__ import annotations
 
+import json
 import sqlite3
+import uuid
 
 import pytest
+from pydantic import ValidationError
 
-from pios_algo.events import ConcurrencyError, DuplicateEventConflict, SqliteEventStore, TenantMismatch
+from pios_algo.events import (
+    ConcurrencyError,
+    DuplicateEventConflict,
+    SqliteEventStore,
+    TenantMismatch,
+    UnknownEventVersion,
+)
 from pios_algo.tenancy import InvalidTenantId
 
 
@@ -75,6 +84,56 @@ def test_tenant_isolation(tmp_path, make_event):
 def test_bad_tenant_cannot_escape_root(tmp_path):
     with pytest.raises(InvalidTenantId):
         SqliteEventStore(tmp_path, "../evil")
+
+
+def _insert_raw(store, event, **body_overrides):
+    """Store a body as a future build might have written it, bypassing append()."""
+    body = json.dumps({**json.loads(event.to_json()), **body_overrides})
+    store._conn.execute(
+        "INSERT INTO algo_events (event_id, stream_id, stream_version, type, ts, body) VALUES (?,?,?,?,?,?)",
+        (str(event.event_id), event.stream_id, 1, event.type.value, event.ts.isoformat(), body),
+    )
+
+
+def test_chain_ids_survive_the_store(store, make_event, risk_id):
+    e = make_event(correlation_id=risk_id, causation_id=uuid.uuid4())
+    store.append([e])
+    assert store.read_stream("will", e.stream_id)[0].envelope == e
+
+
+@pytest.mark.parametrize("version", [0, 2, 99, None, "1"])
+def test_read_refuses_unknown_version(store, make_event, version):
+    e = make_event()
+    _insert_raw(store, e, version=version)
+    with pytest.raises(UnknownEventVersion):
+        store.read_stream("will", e.stream_id)
+    with pytest.raises(UnknownEventVersion):
+        store.read_all("will")
+
+
+def test_read_refuses_missing_version(store, make_event):
+    e = make_event()
+    body = json.loads(e.to_json())
+    del body["version"]
+    store._conn.execute(
+        "INSERT INTO algo_events (event_id, stream_id, stream_version, type, ts, body) VALUES (?,?,?,?,?,?)",
+        (str(e.event_id), e.stream_id, 1, e.type.value, e.ts.isoformat(), json.dumps(body)),
+    )
+    with pytest.raises(UnknownEventVersion):
+        store.read_all("will")
+
+
+def test_read_refuses_unknown_type(store, make_event):
+    e = make_event()
+    _insert_raw(store, e, type="algo.NotARealType")
+    with pytest.raises(ValidationError):
+        store.read_all("will")
+
+
+def test_append_refuses_unknown_version_atomically(store, make_event):
+    with pytest.raises(UnknownEventVersion):
+        store.append([make_event(), make_event(version=2)])
+    assert store.count() == 0
 
 
 def test_rows_cannot_be_updated_or_deleted(store, make_event):

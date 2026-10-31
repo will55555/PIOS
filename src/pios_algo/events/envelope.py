@@ -125,6 +125,9 @@ class Envelope(BaseModel):
     ts: datetime
     payload: dict[str, Any] = Field(default_factory=dict)
     meta: Meta
+    # Event chain (PIOS ADR-011, ADR-020); stored events can't be backfilled, so the fields exist from the start.
+    correlation_id: uuid.UUID | None = None
+    causation_id: uuid.UUID | None = None
 
     @field_validator("ts")
     @classmethod

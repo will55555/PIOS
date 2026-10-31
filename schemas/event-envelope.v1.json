@@ -219,6 +219,32 @@
   "additionalProperties": false,
   "description": "One immutable event. Append-only; never edited after it is stored.",
   "properties": {
+    "causation_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Causation Id"
+    },
+    "correlation_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Correlation Id"
+    },
     "event_id": {
       "format": "uuid",
       "title": "Event Id",

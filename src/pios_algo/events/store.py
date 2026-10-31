@@ -25,6 +25,10 @@ class TenantMismatch(EventStoreError):
     """An event for another tenant was offered to this tenant's store."""
 
 
+class UnknownEventVersion(EventStoreError):
+    """An event's version has no upcast path to the current one (PIOS ADR-013: fail loudly, never guess)."""
+
+
 @dataclass(frozen=True)
 class StoredEvent:
     global_seq: int

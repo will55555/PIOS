@@ -47,3 +47,17 @@ Built by Claude in the planning chat; copied into SDE.
 **Follow-up (Will 11:20)**
 - Small-account exposure tier: below $1,000 equity the caps are 70% per symbol / 80% per group; from $1,000 they revert to 35% / 50% (`AccountLimits.small_account`, set in `will-strategies/config/tenant.json`). Reason: Will chose to raise the caps while the account is small → MOM-01 can use Core's full cash again (cash binds, ≈ $100).
 - MOM-01 spec keeps `max_concurrent_positions = 1`: Core cash (~$100) funds one position at 1% risk anyway; the account ceiling stays 3 for when Core grows (revisit at Core ≥ ~$300).
+
+## 2026-10-31 — Pre-step-3: build moves to SDE, tzdata, event chain IDs, unknown-version failure
+The build moved from the Claude Desktop cloud workspace to Claude Code working directly in `SDE` (hand-over point `9ba2c2e` / `01d5013`; Will pulled and tested step 2 on the laptop). Live trading stays in the Cowork scheduled tasks.
+
+**Done**
+- Added `tzdata` to `dependencies`, for all platforms. Step 2 crashed on Windows at import (`ZoneInfoNotFoundError` from `core/bars.py:15` and `tests/conftest.py:17`): Windows has no system time zone database, and the earlier runs were on Linux. Declaring it everywhere also means the Lambdas don't depend on their base image.
+- Added nullable `correlation_id` and `causation_id` to the envelope (PIOS ADR-011, ADR-020), since stored events can't be backfilled.
+- The store now raises `UnknownEventVersion` on read for any version other than the current one (PIOS ADR-013). An unknown event type already fails at read with a pydantic `ValidationError`; a test now pins that.
+- README: doc paths updated after the docs split between `pios-algo/docs` and `will-strategies/docs`.
+- Checks (Will ran them on Windows, Python 3.13, with `tzdata` already installed by hand in that `.venv`): 81 platform tests + 9 will-strategies tests pass; ruff clean; mypy strict clean.
+
+**Deviations / decisions taken (reason → consequence)**
+1. The envelope stays v1 despite the new fields. No event database exists yet, so no stored event needs upcasting → once real events are stored, any further field change needs a version bump and an upcast path (ADR-013).
+2. `append` also refuses unknown versions, which the plan's read-only rule didn't cover. The log is append-only, so an unreadable event could never be removed → a bad event fails its whole batch before anything is written.

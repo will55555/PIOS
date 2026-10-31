@@ -7,7 +7,7 @@ import sqlite3
 from collections.abc import Iterator, Sequence
 from pathlib import Path
 
-from pios_algo.events.envelope import Envelope
+from pios_algo.events.envelope import ENVELOPE_VERSION, Envelope
 from pios_algo.events.store import (
     AppendResult,
     ConcurrencyError,
@@ -16,6 +16,7 @@ from pios_algo.events.store import (
     EventStoreError,
     StoredEvent,
     TenantMismatch,
+    UnknownEventVersion,
 )
 from pios_algo.tenancy import tenant_dir, validate_tenant_id
 
@@ -48,6 +49,17 @@ BEGIN SELECT RAISE(ABORT, 'events are append-only'); END;
 
 def _canonical(env: Envelope) -> str:
     return json.dumps(json.loads(env.to_json()), sort_keys=True, separators=(",", ":"))
+
+
+def _check_version(version: object) -> None:
+    if version != ENVELOPE_VERSION:
+        raise UnknownEventVersion(f"event version {version!r} has no upcast path to {ENVELOPE_VERSION} (ADR-013)")
+
+
+def _decode(body: str) -> Envelope:
+    # Upcasting belongs here at the repo layer (ADR-013); v1 is the only version so far.
+    _check_version(json.loads(body).get("version"))
+    return Envelope.from_json(body)
 
 
 class SqliteEventStore(EventStore):
@@ -90,6 +102,7 @@ class SqliteEventStore(EventStore):
             return AppendResult(0, 0, None)
         for e in events:
             self._check_tenant(e.tenant_id)
+            _check_version(e.version)  # the log is append-only, so an unreadable event could never be removed
         if expected_version is not None and len({e.stream_id for e in events}) != 1:
             raise EventStoreError("expected_version requires all events in one stream")
 
@@ -132,7 +145,7 @@ class SqliteEventStore(EventStore):
 
     def _rows(self, sql: str, args: tuple[object, ...]) -> Iterator[StoredEvent]:
         for seq, version, body in self._conn.execute(sql, args):
-            yield StoredEvent(seq, version, Envelope.from_json(body))
+            yield StoredEvent(seq, version, _decode(body))
 
     def read_stream(self, tenant_id: str, stream_id: str) -> list[StoredEvent]:
         self._check_tenant(tenant_id)

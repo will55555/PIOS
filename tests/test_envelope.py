@@ -14,6 +14,24 @@ def test_valid_event_roundtrips(make_event):
     assert e.version == 1
 
 
+def test_chain_ids_default_to_none(make_event):
+    e = make_event()
+    assert e.correlation_id is None and e.causation_id is None
+
+
+def test_chain_ids_roundtrip(make_event, risk_id):
+    parent = make_event()
+    e = make_event(correlation_id=risk_id, causation_id=parent.event_id)
+    back = Envelope.from_json(e.to_json())
+    assert back.correlation_id == risk_id
+    assert back.causation_id == parent.event_id
+
+
+def test_chain_ids_must_be_uuids(make_event):
+    with pytest.raises(ValidationError):
+        make_event(correlation_id="not-a-uuid")
+
+
 @pytest.mark.parametrize("bad", ["", "Will", "will/../x", "-will", "a b", "w" * 65])
 def test_tenant_id_must_be_slug(make_event, bad):
     with pytest.raises(ValidationError):
