@@ -66,7 +66,7 @@ The build moved from the Claude Desktop cloud workspace to Claude Code working d
 - Engine runs on 3.15, Lambdas on 3.14 (the newest managed runtime found, per PIOS ADR-020), so `requires-python` is `>=3.14` in both repos, with ruff and mypy targeting that floor. This replaces step 1's `>=3.10`, which only existed for the cloud chat's linked Python 3.10 shell → that shell can no longer run these repos, and no longer needs to now the build lives in SDE.
 - First run on 3.15.2 (Will, Windows): 81 platform tests + 9 will-strategies tests pass; will-strategies ruff clean. pios-algo ruff failed on UP042 (`EventType(str, Enum)`), a rule the py314 target turned on, which also stopped that run before mypy started.
 - Fix: `EventType(StrEnum)`. It changes `str(member)` from `EventType.OrderPlaced` to `algo.OrderPlaced`, but all code compares members or reads `.value`. Rejected: silencing the rule, which keeps the old pattern for no benefit.
-- Status at this entry: **pios-algo ruff and mypy still to rerun on 3.15, not committed**. will-strategies has no mypy in its dev tools or config, so mypy doesn't apply there. 3.14 itself hasn't been run. The dependencies resolve for 3.15 and 3.14 on Windows and `pydantic` for 3.14 on Linux (`uv pip compile --only-binary :all:`), which shows they can install but tests nothing.
+- Status at this entry: rerun on 3.15.2 after the fix: 81 tests pass, ruff clean, mypy strict clean on its configured packages (11 source files). Committed as `a83ab5f`, will-strategies as `c1fc3b7`. will-strategies has no mypy in its dev tools or config, so mypy doesn't apply there. 3.14 itself hasn't been run. The dependencies resolve for 3.15 and 3.14 on Windows and `pydantic` for 3.14 on Linux (`uv pip compile --only-binary :all:`), which shows they can install but tests nothing.
 
 **How step 2 reached the laptop**
 1. The hand-over said the bundles in `SDE` held `9ba2c2e` / `01d5013`. `git bundle list-heads` showed `a0d4005` / `df5c951`: valid bundles, one commit short, with no small-account tier. A pull would have succeeded and left MOM-01 on the 35% cap with no error.
@@ -84,6 +84,6 @@ uv venv --python 3.15 --seed --clear .venv     # --seed: pip is needed for the i
 
 **Known limitations / next**
 - `.venv` rebuilt on 3.15.2 in both repos, after the move below.
-- Next: rerun pios-algo's checks on 3.15 (expect 81 passed, ruff and mypy clean), commit the Python targets and the `StrEnum` fix.
+- Next: step 3, the Webull adapter on paperTrade keys. Blocked until Will generates the keys.
 - Done: `pios`, `pios-algo` and `will-strategies` moved into `terra-initiative-home`, all three in its `.gitignore` because that repo has GitHub and Bitbucket remotes and `will-strategies/docs` holds private data. That `.gitignore` change and HUB.md Machine Paths are still to be updated at the next sync.
 - Both repos stay local until the Terra GitHub org exists.
