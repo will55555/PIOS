@@ -7,7 +7,7 @@ name = "pios-algo"
 version = "0.1.0"
 description = "Terra's multi-tenant, bring-your-own-strategy algo trading platform (PIOS algo layer)"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.14"
 license = { text = "Proprietary — Terra" }
 dependencies = ["pydantic>=2.6,<3", "tzdata"]
 
@@ -24,14 +24,14 @@ addopts = "-q"
 
 [tool.ruff]
 line-length = 120
-target-version = "py310"
+target-version = "py314"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "SIM"]
 ignore = ["SIM108"]
 
 [tool.mypy]
-python_version = "3.12"
+python_version = "3.14"
 packages = ["pios_algo.core", "pios_algo.events", "pios_algo.tenancy"]
 mypy_path = "src"
 strict = true

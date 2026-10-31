@@ -9,7 +9,7 @@ from __future__ import annotations
 import math
 import uuid
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
@@ -19,7 +19,7 @@ from pios_algo.tenancy import TENANT_ID_RE
 ENVELOPE_VERSION = 1
 
 
-class EventType(str, Enum):
+class EventType(StrEnum):
     # Core types (architecture §3)
     SignalDetected = "algo.SignalDetected"
     SignalBlocked = "algo.SignalBlocked"

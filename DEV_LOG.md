@@ -61,3 +61,29 @@ The build moved from the Claude Desktop cloud workspace to Claude Code working d
 **Deviations / decisions taken (reason → consequence)**
 1. The envelope stays v1 despite the new fields. No event database exists yet, so no stored event needs upcasting → once real events are stored, any further field change needs a version bump and an upcast path (ADR-013).
 2. `append` also refuses unknown versions, which the plan's read-only rule didn't cover. The log is append-only, so an unreadable event could never be removed → a bad event fails its whole batch before anything is written.
+
+**Python targets**
+- Engine runs on 3.15, Lambdas on 3.14 (the newest managed runtime found, per PIOS ADR-020), so `requires-python` is `>=3.14` in both repos, with ruff and mypy targeting that floor. This replaces step 1's `>=3.10`, which only existed for the cloud chat's linked Python 3.10 shell → that shell can no longer run these repos, and no longer needs to now the build lives in SDE.
+- First run on 3.15.2 (Will, Windows): 81 platform tests + 9 will-strategies tests pass; will-strategies ruff clean. pios-algo ruff failed on UP042 (`EventType(str, Enum)`), a rule the py314 target turned on, which also stopped that run before mypy started.
+- Fix: `EventType(StrEnum)`. It changes `str(member)` from `EventType.OrderPlaced` to `algo.OrderPlaced`, but all code compares members or reads `.value`. Rejected: silencing the rule, which keeps the old pattern for no benefit.
+- Status at this entry: **pios-algo ruff and mypy still to rerun on 3.15, not committed**. will-strategies has no mypy in its dev tools or config, so mypy doesn't apply there. 3.14 itself hasn't been run. The dependencies resolve for 3.15 and 3.14 on Windows and `pydantic` for 3.14 on Linux (`uv pip compile --only-binary :all:`), which shows they can install but tests nothing.
+
+**How step 2 reached the laptop**
+1. The hand-over said the bundles in `SDE` held `9ba2c2e` / `01d5013`. `git bundle list-heads` showed `a0d4005` / `df5c951`: valid bundles, one commit short, with no small-account tier. A pull would have succeeded and left MOM-01 on the 35% cap with no error.
+2. Root cause, per the algo chat: its tool reported the re-sent files as written, but the laptop copies were never replaced. It reissued them as `*-step2b.bundle`, which checked out: correct heads, step 1 as prerequisite, fast-forward in throwaway clones, E15 values present. Lesson: check delivered files on the machine that receives them.
+3. Private docs split out before the pull: state, handoff and planning notes went to `will-strategies/docs/` (untracked, not gitignored there), architecture and brief stayed in `pios-algo/docs/` (untracked). No account-ID-like value appears in `pios-algo` files, history or the bundle.
+
+**Rebuilding `.venv` on Windows**
+```bash
+# Git Bash, from terra-initiative-home/pios-algo. PowerShell 5.1 has no && and Git Bash strips backslashes.
+uv venv --python 3.15 --seed --clear .venv     # --seed: pip is needed for the install below
+.venv/Scripts/python -m pip install -e ".[dev]"
+```
+- First attempt failed with `failed to remove directory ...\.venv\Scripts: Access is denied. (os error 5)`. VS Code's isort and Pylint extensions were running from `.venv\Scripts\python.exe`, which locks it; the failed rebuild had already deleted most of `.venv`.
+- Fix: VS Code → **Python: Select Interpreter** → an interpreter outside `.venv`, wait for the extensions to restart, rebuild, then select `.venv` again.
+
+**Known limitations / next**
+- `.venv` rebuilt on 3.15.2 in both repos, after the move below.
+- Next: rerun pios-algo's checks on 3.15 (expect 81 passed, ruff and mypy clean), commit the Python targets and the `StrEnum` fix.
+- Done: `pios`, `pios-algo` and `will-strategies` moved into `terra-initiative-home`, all three in its `.gitignore` because that repo has GitHub and Bitbucket remotes and `will-strategies/docs` holds private data. That `.gitignore` change and HUB.md Machine Paths are still to be updated at the next sync.
+- Both repos stay local until the Terra GitHub org exists.

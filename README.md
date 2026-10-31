@@ -33,8 +33,8 @@ Next: step 3 — Webull adapter against paperTrade keys (per-tenant KMS/SSM).
 
 ## Run
 ```bash
-python -m venv .venv && . .venv/bin/activate      # Windows: .venv\Scripts\activate
-pip install -e ".[dev]"
+uv venv --python 3.15 --seed .venv && . .venv/bin/activate      # Windows: .venv\Scripts\activate
+pip install -e ".[dev]"                            # engine runs on 3.15, Lambdas on 3.14 (the floor)
 pytest && ruff check . && mypy
 python scripts/export_schema.py                    # after any envelope change
 python scripts/import_legacy.py ../will-strategies/data/events/2026-10-30.jsonl --tenant will --root data
