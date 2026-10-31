@@ -19,7 +19,17 @@ Design docs (Algo Trading Project): `claude/pios-algo-architecture.md` v0.5, ADR
 
 Envelope rules enforced in code: timezone-aware `ts`; no NaN/inf anywhere in `payload`; `algo.OrderPlaced` in live/paper needs `meta.risk_check_id`; `algo.AutonomyLevelChanged`, `algo.FreezeSet`, `algo.FreezeLifted`, `algo.KillSwitchReset` only from `source="will"`.
 
-Next: step 2 — `Strategy` interface + spec loader, platform bounds (ADR-002 A6), account-wide limits (architecture §2A).
+## Status — build step 2 (2026-10-31)
+| Piece | Where |
+| --- | --- |
+| `Strategy` protocol, `StrategySpec` (`designed_on`, `expected_signals_per_week`, `autonomy_level`, risk rules), `param_hash`, approval check | `src/pios_algo/core/strategy_api.py` |
+| Generic bars/indicators (VWAP, ATR, opening range, R) — finite or raise | `src/pios_algo/core/bars.py` |
+| Platform bounds A6, account-wide limits §2A (sizing clipped to limits, `risk_check_id`), live readiness gate | `src/pios_algo/core/risk.py` |
+| Tenant config (limits, approved versions, sector map) | `src/pios_algo/tenancy/config.py` |
+
+Live refuses to start (`LiveNotReady`) if any account limit is unset, any spec breaks A6, any spec isn't approved at its exact `param_hash`, a spec is L0, or `expected_signals_per_week` is missing.
+
+Next: step 3 — Webull adapter against paperTrade keys (per-tenant KMS/SSM).
 
 ## Run
 ```bash

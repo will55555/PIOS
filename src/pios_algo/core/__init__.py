@@ -1,1 +1,1 @@
-"""Placeholder — filled in later build steps (architecture v0.5 §5)."""
+"""Pure core: strategy interface, generic indicators, risk. No I/O, no broker SDKs (ADR-001 §1)."""
