@@ -71,7 +71,7 @@ The build moved from the Claude Desktop cloud workspace to Claude Code working d
 **How step 2 reached the laptop**
 1. The hand-over said the bundles in `SDE` held `9ba2c2e` / `01d5013`. `git bundle list-heads` showed `a0d4005` / `df5c951`: valid bundles, one commit short, with no small-account tier. A pull would have succeeded and left MOM-01 on the 35% cap with no error.
 2. Root cause, per the algo chat: its tool reported the re-sent files as written, but the laptop copies were never replaced. It reissued them as `*-step2b.bundle`, which checked out: correct heads, step 1 as prerequisite, fast-forward in throwaway clones, E15 values present. Lesson: check delivered files on the machine that receives them.
-3. Private docs split out before the pull: state, handoff and planning notes went to `will-strategies/docs/` (untracked, not gitignored there), architecture and brief stayed in `pios-algo/docs/` (untracked). No account-ID-like value appears in `pios-algo` files, history or the bundle.
+3. Private docs split out before the pull: state, handoff and planning notes went to `will-strategies/docs/` (committed locally, `5c563a1`), architecture and brief stayed in `pios-algo/docs/` (committed, `755dfe7`). No account-ID-like value appears in `pios-algo` files, history or the bundle.
 
 **Rebuilding `.venv` on Windows**
 ```bash
@@ -86,4 +86,4 @@ uv venv --python 3.15 --seed --clear .venv     # --seed: pip is needed for the i
 - `.venv` rebuilt on 3.15.2 in both repos, after the move below.
 - Next: step 3, the Webull adapter on paperTrade keys. Blocked until Will generates the keys.
 - Done: `pios`, `pios-algo` and `will-strategies` moved into `terra-initiative-home`, all three in its `.gitignore` because that repo has GitHub and Bitbucket remotes and `will-strategies/docs` holds private data. That `.gitignore` change and HUB.md Machine Paths are still to be updated at the next sync.
-- Both repos stay local until the Terra GitHub org exists.
+- `pios`, `pios-algo` and `will-strategies` all stay local for now, with no remotes set up.
