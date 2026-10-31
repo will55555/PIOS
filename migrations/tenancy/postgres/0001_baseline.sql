@@ -1,0 +1,2 @@
+-- tenancy baseline (postgres). Empty on purpose: pios_schema_v1.0.0 has no recoverable DDL.
+-- This module adds its own tables in later numbered files. See migrations/README.md.
