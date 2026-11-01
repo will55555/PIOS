@@ -29,3 +29,8 @@ build/
 *.tfstate.*
 *.tfvars
 !example.tfvars
+
+# Credentials and local settings
+*.env
+*credentials*.csv
+.vscode/

@@ -122,6 +122,8 @@ Store: one SQLite file per tenant (`data/tenants/<tenant>/events.db`), `algo_eve
 | A + C 24/7 | ≈ $19–21 |
 All leave room under the $30 cap for the Webull OpenAPI stock-data plan.
 
+**Updated 2026-10-31 (Will, E16):** start with A only at a ≈ $10 cap until a strategy has earned more. The tables above stay as the upgrade path.
+
 ## 5. Build order (status 2026-10-31)
 1. ✅ **Done 10/31** — two repos; `tenant_id` everywhere; envelope (incl. `risk_check_id`, `param_hash`, `autonomy_level`); SQLite event store; import of the 10/30 JSONL (64/64). pios-algo 2af7a93 / will-strategies e653f77.
 2. ✅ **Done 10/31** — `Strategy` interface + spec loader (`designed_on`, `expected_signals_per_week`, `autonomy_level`); `param_hash` + approval; MOM-01 in `will-strategies` (reproduces the day-1 order); A6 bounds + account-wide limits (§2A) + small-account tier; live refuses to start with any limit unset. pios-algo 9ba2c2e / will-strategies 01d5013 (bundles for Will to pull).
