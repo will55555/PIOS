@@ -34,3 +34,5 @@ build/
 *.env
 *credentials*.csv
 .vscode/
+
+docs/
