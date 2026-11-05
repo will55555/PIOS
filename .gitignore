@@ -15,3 +15,23 @@ build/
 .env
 .env.*
 data/
+
+# Additional project and OS artifacts
+node_modules/
+*.class
+*.log
+*.jar
+target/
+.idea/
+TEST*.xml
+.DS_Store
+Thumbs.db
+*.app
+*.exe
+*.war
+*.mp4
+*.tiff
+*.avi
+*.flv
+*.mov
+*.wmv
