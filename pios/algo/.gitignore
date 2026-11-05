@@ -1,0 +1,38 @@
+# secrets — never commit (ADR-002 A4)
+.env
+.env.*
+*.pem
+*.key
+secrets/
+
+# tenant data / event stores
+data/
+*.db
+*.db-wal
+*.db-shm
+
+# python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+dist/
+build/
+*.egg-info/
+
+# terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!example.tfvars
+
+# Credentials and local settings
+*.env
+*credentials*.csv
+.vscode/
+
+docs/

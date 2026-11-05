@@ -1,0 +1,35 @@
+{"ts": "2026-01-05T10:00", "type": "signal", "note": "synthetic fixture line", "symbol": "TEST", "price": 100.0}
+{"ts": "2026-01-05T10:01", "type": "signal_blocked", "note": "synthetic fixture line", "symbol": "TEST", "price": 101.0}
+{"ts": "2026-01-05T10:02", "type": "signal_not_taken", "note": "synthetic fixture line", "symbol": "TEST", "price": 102.0}
+{"ts": "2026-01-05T10:03", "type": "order_instruction", "note": "synthetic fixture line", "symbol": "TEST", "price": 103.0}
+{"ts": "2026-01-05T10:04", "type": "fill", "note": "synthetic fixture line", "symbol": "TEST", "price": 104.0}
+{"ts": "2026-01-05T10:05", "type": "order_revoked", "note": "synthetic fixture line", "symbol": "TEST", "price": 105.0}
+{"ts": "2026-01-05T10:06", "type": "stop_hit", "note": "synthetic fixture line", "symbol": "TEST", "price": 106.0}
+{"ts": "2026-01-05T10:07", "type": "position_check", "note": "synthetic fixture line", "symbol": "TEST", "price": 107.0}
+{"ts": "2026-01-05T10:08", "type": "deviation", "note": "synthetic fixture line"}
+{"ts": "2026-01-05T10:09", "type": "account", "note": "synthetic fixture line"}
+{"ts": "2026-01-05T10:10", "type": "user_decision", "note": "synthetic fixture line"}
+{"ts": "2026-01-05T10:11", "type": "rule_change", "note": "synthetic fixture line"}
+{"ts": "2026-01-05T10:12", "type": "user_correction", "note": "synthetic fixture line"}
+{"ts": "2026-01-05T10:13", "type": "config_change", "note": "synthetic fixture line"}
+{"ts": "2026-01-05T10:14", "type": "setup", "note": "synthetic fixture line"}
+{"ts": "2026-01-05T10:15", "type": "shadow_result", "note": "synthetic fixture line"}
+{"ts": "2026-01-05T10:16", "type": "eod_comparison", "note": "synthetic fixture line"}
+{"ts": "2026-01-05T10:17", "type": "day_summary", "note": "synthetic fixture line"}
+{"ts": "2026-01-05T10:18", "type": "analysis", "note": "synthetic fixture line"}
+{"ts": "2026-01-05T10:19", "type": "backtest", "note": "synthetic fixture line"}
+{"ts": "2026-01-05T10:20", "type": "finding", "note": "synthetic fixture line"}
+{"ts": "2026-01-05T10:21", "type": "review", "note": "synthetic fixture line"}
+{"ts": "2026-01-05T10:22", "type": "design", "note": "synthetic fixture line"}
+{"ts": "2026-01-05T10:23", "type": "build", "note": "synthetic fixture line"}
+{"ts": "2026-01-05T10:24", "type": "bug_fix", "note": "synthetic fixture line"}
+{"ts": "2026-01-05T10:25", "type": "repair", "note": "synthetic fixture line"}
+{"ts": "2026-01-05T10:26", "type": "tokens", "note": "synthetic fixture line"}
+{"ts": "2026-01-05T10:27", "type": "run", "note": "synthetic fixture line"}
+{"ts": "2026-01-05T10:28", "type": "user", "note": "synthetic fixture line"}
+{"ts": "2026-01-05T10:29", "type": "user_action", "note": "synthetic fixture line"}
+{"ts": "2026-01-05T10:30", "type": "context", "note": "synthetic fixture line"}
+{"ts": "2026-01-05T10:31", "type": "universe", "note": "synthetic fixture line"}
+{"ts": "2026-01-05T10:32", "type": "opening_range", "note": "synthetic fixture line"}
+{"ts": "2026-01-05T11:00:00-05:00", "type": "config_change", "strategy": "ALL", "fields": {"what": "aware ts"}}
+{"ts": "2026-01-05T11:01", "type": "unmapped_example"}

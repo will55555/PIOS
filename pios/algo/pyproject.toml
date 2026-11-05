@@ -1,0 +1,38 @@
+[build-system]
+requires = ["hatchling>=1.24"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pios-algo"
+version = "0.1.0"
+description = "Terra's multi-tenant, bring-your-own-strategy algo trading platform (PIOS algo layer)"
+readme = "README.md"
+requires-python = ">=3.14"
+license = { text = "Proprietary — Terra" }
+dependencies = ["pydantic>=2.6,<3", "tzdata"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.6", "mypy>=1.10"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/pios_algo"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src", "scripts"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 120
+target-version = "py314"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM"]
+ignore = ["SIM108"]
+
+[tool.mypy]
+python_version = "3.14"
+packages = ["pios_algo.core", "pios_algo.events", "pios_algo.tenancy"]
+mypy_path = "src"
+strict = true
+plugins = ["pydantic.mypy"]

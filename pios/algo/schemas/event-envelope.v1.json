@@ -1,0 +1,306 @@
+{
+  "$defs": {
+    "EventType": {
+      "enum": [
+        "algo.SignalDetected",
+        "algo.SignalBlocked",
+        "algo.RiskCheckPassed",
+        "algo.OrderPlaced",
+        "algo.OrderAcknowledged",
+        "algo.OrderConfirmed",
+        "algo.OrderPartiallyFilled",
+        "algo.OrderFilled",
+        "algo.OrderRejected",
+        "algo.OrderRevoked",
+        "algo.StopHit",
+        "algo.TargetHit",
+        "algo.TimeExit",
+        "algo.PositionClosed",
+        "algo.DeviationLogged",
+        "algo.SleeveFunded",
+        "algo.KillSwitchTripped",
+        "algo.KillSwitchReset",
+        "algo.DailyLimitHit",
+        "algo.AccountLimitHit",
+        "algo.FreezeSet",
+        "algo.FreezeLifted",
+        "algo.HostInterrupted",
+        "algo.HostRecovered",
+        "algo.FallbackEngaged",
+        "algo.InfraCostRecorded",
+        "algo.HostingTierChanged",
+        "algo.BoundViolationBlocked",
+        "algo.AutonomyLevelChanged",
+        "algo.AccountSnapshot",
+        "algo.DecisionRecorded",
+        "algo.ConfigChanged",
+        "algo.PositionChecked",
+        "algo.ResultRecorded",
+        "algo.AnalysisRecorded",
+        "algo.NoteRecorded"
+      ],
+      "title": "EventType",
+      "type": "string"
+    },
+    "Meta": {
+      "additionalProperties": false,
+      "properties": {
+        "account": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account"
+        },
+        "autonomy_level": {
+          "anyOf": [
+            {
+              "enum": [
+                "L0",
+                "L1",
+                "L2",
+                "L3"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Autonomy Level"
+        },
+        "broker": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Broker"
+        },
+        "host": {
+          "anyOf": [
+            {
+              "enum": [
+                "spot",
+                "ondemand",
+                "lambda",
+                "claude",
+                "local"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Host"
+        },
+        "mode": {
+          "anyOf": [
+            {
+              "enum": [
+                "live",
+                "paper",
+                "shadow",
+                "backtest"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mode"
+        },
+        "param_hash": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Param Hash"
+        },
+        "risk_check_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Risk Check Id"
+        },
+        "rule_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rule Ref"
+        },
+        "sleeve": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sleeve"
+        },
+        "source": {
+          "enum": [
+            "engine",
+            "lambda",
+            "claude",
+            "will"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "strategy": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Strategy"
+        },
+        "strategy_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Strategy Version"
+        }
+      },
+      "required": [
+        "source"
+      ],
+      "title": "Meta",
+      "type": "object"
+    }
+  },
+  "$id": "https://terra/pios-algo/schemas/event-envelope.v1.json",
+  "additionalProperties": false,
+  "description": "One immutable event. Append-only; never edited after it is stored.",
+  "properties": {
+    "causation_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Causation Id"
+    },
+    "correlation_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Correlation Id"
+    },
+    "event_id": {
+      "format": "uuid",
+      "title": "Event Id",
+      "type": "string"
+    },
+    "meta": {
+      "$ref": "#/$defs/Meta"
+    },
+    "payload": {
+      "additionalProperties": true,
+      "title": "Payload",
+      "type": "object"
+    },
+    "stream": {
+      "enum": [
+        "trade",
+        "sleeve",
+        "system",
+        "signal"
+      ],
+      "title": "Stream",
+      "type": "string"
+    },
+    "stream_id": {
+      "minLength": 1,
+      "title": "Stream Id",
+      "type": "string"
+    },
+    "tenant_id": {
+      "pattern": "^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$",
+      "title": "Tenant Id",
+      "type": "string"
+    },
+    "ts": {
+      "format": "date-time",
+      "title": "Ts",
+      "type": "string"
+    },
+    "type": {
+      "$ref": "#/$defs/EventType"
+    },
+    "version": {
+      "default": 1,
+      "minimum": 1,
+      "title": "Version",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "tenant_id",
+    "stream",
+    "stream_id",
+    "type",
+    "ts",
+    "meta"
+  ],
+  "title": "pios-algo event envelope v1",
+  "type": "object"
+}
