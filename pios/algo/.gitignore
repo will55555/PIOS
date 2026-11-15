@@ -33,6 +33,8 @@ build/
 # Credentials and local settings
 *.env
 *credentials*.csv
-.vscode/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/tasks.json
 
 docs/

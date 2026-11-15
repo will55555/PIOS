@@ -31,7 +31,26 @@ Live refuses to start (`LiveNotReady`) if any account limit is unset, any spec b
 
 Next: step 3 — Webull adapter against paperTrade keys (per-tenant KMS/SSM).
 
+## New machine
+One command installs or updates what pios-algo needs, then builds it:
+
+| OS | Command |
+| --- | --- |
+| Windows (PowerShell) | `powershell -ExecutionPolicy Bypass -File scripts\bootstrap.ps1` |
+| Linux / macOS | `bash scripts/bootstrap.sh` |
+
+It installs or updates uv and the C++ compiler (Visual Studio Build Tools on Windows, build-essential or the
+Xcode tools elsewhere; this may ask for admin or sudo). It installs Python from `.python-version`, creates
+`.venv`, and runs `uv pip install -e ".[dev]"`, which compiles the C++ module. The build downloads CMake and
+Ninja itself. Add `-Upgrade` / `--upgrade` to move packages to the newest versions `pyproject.toml` allows;
+`-Check` / `--check` only reports what is missing.
+
+**VS Code:** open the `pios-algo` folder (it is also a root in `terra-workspace.code-workspace`), accept the
+recommended extensions, and allow automatic tasks once. The setup check then runs every time the folder opens;
+**Tasks: Run Task → pios-algo: bootstrap** does the full setup.
+
 ## Run
+Installing now compiles the C++ indicator library in `compute/` (scikit-build-core + pybind11), so it needs a C++20 compiler: MSVC 2022, GCC 11+ or Clang 15+. If the module isn't built, indicators raise `InvalidIndicator` (no entries); `Bar`, risk and exits still work.
 ```bash
 uv venv --python 3.15 --seed .venv && . .venv/bin/activate      # Windows: .venv\Scripts\activate
 pip install -e ".[dev]"                            # engine runs on 3.15, Lambdas on 3.14 (the floor)
@@ -39,6 +58,7 @@ pytest && ruff check . && mypy
 python scripts/export_schema.py                    # after any envelope change
 python scripts/import_legacy.py ../will-strategies/data/events/2026-10-30.jsonl --tenant will --root data
 ```
+Windows PowerShell 5.1 has no `&&`: run `pytest; ruff check .; mypy` instead.
 
 ## Legacy import mapping
 | Legacy `type` | Event type | Stream |

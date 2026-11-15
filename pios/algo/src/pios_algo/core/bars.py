@@ -12,6 +12,13 @@ from dataclasses import dataclass
 from datetime import datetime, time, timedelta
 from zoneinfo import ZoneInfo
 
+try:
+    import pios_algo_compute as _native  # C++ indicator library (ADR-PIOS-ALGO-009)
+
+    _NATIVE_ERROR: ImportError | None = None
+except ImportError as exc:  # not built: indicators fail closed; Bar, risk and exits still work
+    _NATIVE_ERROR = exc
+
 ET = ZoneInfo("America/New_York")
 RTH_OPEN = time(9, 30)
 RTH_CLOSE = time(16, 0)
@@ -51,6 +58,11 @@ def _finite(x: float, what: str) -> float:
     return x
 
 
+def _require_native() -> None:
+    if _NATIVE_ERROR is not None:
+        raise InvalidIndicator("C++ indicator library (pios_algo_compute) is not built") from _NATIVE_ERROR
+
+
 def rth(bars: Sequence[Bar]) -> list[Bar]:
     """Regular-hours bars only (09:30–16:00 ET)."""
     return [b for b in bars if RTH_OPEN <= b.t.astimezone(ET).time() < RTH_CLOSE]
@@ -62,26 +74,22 @@ def closed_only(bars: Sequence[Bar], now: datetime) -> list[Bar]:
 
 
 def vwap_series(bars: Sequence[Bar]) -> list[float]:
-    """Cumulative VWAP (typical price) over ``bars``. Zero-volume prefix falls back to close."""
-    pv = vol = 0.0
-    out: list[float] = []
-    for b in bars:
-        tp = (b.h + b.l + b.c) / 3
-        pv += tp * b.v
-        vol += b.v
-        out.append(_finite(pv / vol if vol else b.c, "vwap"))
-    return out
+    """Cumulative VWAP (typical price) over ``bars``. Zero-volume prefix falls back to close. Computed in C++."""
+    _require_native()
+    out = _native.vwap_series([b.h for b in bars], [b.l for b in bars], [b.c for b in bars], [b.v for b in bars])
+    return [_finite(x, "vwap") for x in out]
 
 
 def atr(bars: Sequence[Bar], n: int = 14) -> float:
-    """Simple ATR over the last ``n`` true ranges. Raises if fewer than 2 bars."""
+    """Simple ATR over the last ``n`` true ranges. Raises if fewer than 2 bars. Computed in C++."""
+    _require_native()
     if len(bars) < 2:
         raise InvalidIndicator("atr needs at least 2 bars")
-    trs = []
-    for prev, b in zip(bars, bars[1:], strict=False):
-        trs.append(max(b.h - b.l, abs(b.h - prev.c), abs(b.l - prev.c)))
-    trs = trs[-n:]
-    return _finite(sum(trs) / len(trs), "atr")
+    n_tr = len(bars) - 1
+    start = slice(-n, None).indices(n_tr)[0]  # the same window as trs[-n:]
+    if start >= n_tr:
+        raise InvalidIndicator("atr window is empty")
+    return _finite(_native.atr([b.h for b in bars], [b.l for b in bars], [b.c for b in bars], start), "atr")
 
 
 @dataclass(frozen=True)
@@ -104,7 +112,8 @@ def opening_range(today_rth: Sequence[Bar], minutes: int) -> OpeningRange | None
     orb = [b for b in today_rth if b.t.astimezone(ET).time() < end_t]
     if len(orb) < need:
         return None
-    lo, hi = min(b.l for b in orb), max(b.h for b in orb)
+    _require_native()
+    lo, hi = _native.low_high([b.l for b in orb], [b.h for b in orb])
     if lo <= 0:
         raise InvalidIndicator("opening range low <= 0")
     return OpeningRange(
