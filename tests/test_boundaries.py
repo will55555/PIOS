@@ -11,6 +11,7 @@ from pios_algo.events import EventType, SqliteEventStore
 
 PKG = Path(__file__).resolve().parents[1] / "src" / "pios_algo"
 ALLOWED_THIRD_PARTY = {"pydantic"}
+OWN_NATIVE = {"pios_algo_compute"}  # pios-algo's own C++ module (compute/), not outside code
 STDLIB = set(sys.stdlib_module_names)
 
 
@@ -29,7 +30,7 @@ def test_no_imports_outside_package():
     """Only stdlib, pios_algo itself and the allow-listed libraries — no PIOS, no tenant strategy code."""
     offenders = {}
     for py in PKG.rglob("*.py"):
-        bad = _imports(py) - STDLIB - ALLOWED_THIRD_PARTY - {"pios_algo", "__future__"}
+        bad = _imports(py) - STDLIB - ALLOWED_THIRD_PARTY - OWN_NATIVE - {"pios_algo", "__future__"}
         if bad:
             offenders[str(py.relative_to(PKG))] = sorted(bad)
     assert offenders == {}
