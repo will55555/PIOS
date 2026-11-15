@@ -20,7 +20,7 @@ PIOS is a multi-language repo by design: each component uses its best-fit langua
 | --- | --- | --- |
 | PIOS Core (events, projections, policy, allocation), ingestion adapters | Python (FastAPI) | Scaffold |
 | `pios/algo` engine, broker adapters, strategies, market-data gateway, watchdog, Lambdas | Python | In build in the pios-algo repo |
-| Backtest/sweep engine, scanner, indicator library, Monte Carlo, options pricing | C++ (pybind11), compute only | Skeleton at `pios/algo/compute` (lands with the next subtree pull) |
+| Backtest/sweep engine, scanner, indicator library, Monte Carlo, options pricing | C++ (pybind11), compute only | Indicator library at `pios/algo/compute`; the rest not started |
 | UI and analysis workstation (ADR-018, ADR-PIOS-ALGO-019) | TypeScript (Angular) | Separate `pios-fe` repo, same model as terra-api-fe (served same-origin by Core); app not generated yet |
 | Terra API and integration services | Java (Spring Boot) | Lives in `terra-api` |
 | Storage and analytics | SQL (SQLite → PostgreSQL) | Stubs in `migrations/` |
