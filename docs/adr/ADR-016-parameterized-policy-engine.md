@@ -4,6 +4,8 @@
 
 > 2026-10-23 note: the Deferred line "Parameter UI (Angular) — follows the frontend open item" — the frontend choice is already decided (PIOS ADR-018, Angular, accepted 2026-08-24). The Parameter UI itself is still deferred.
 
+> 2026-11-14 cross-reference (OD-8, PIOS ADR-022, accepted 2026-11-03): Decisions 4–5 ("never an order", "execution happens outside PIOS") are read under ADR-022. In the target architecture PIOS authorizes governed orders, and execution adapters, including the `pios/algo` engine, act only inside that authorization. Mirrored on the Notion page.
+
 **Status:** Proposed (2026-10-17) — design-level; PIOS remains pre-coding behind the learning gate
 
 **Service:** PIOS

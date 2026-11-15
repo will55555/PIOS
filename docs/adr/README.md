@@ -15,3 +15,7 @@ Notion is the source for ADRs 001–019: https://app.notion.com/p/36f89370d49781
 | [018](ADR-018-frontend-angular.md) | Angular frontend | Accepted |
 | [019](ADR-019-ingestion-adapters.md) | Ingestion adapters, observed vs derived reconciliation (edited copy) | Proposed |
 | [020](ADR-020-event-core-and-algo-boundary.md) | PIOS owns its envelope; pios-algo boundary; scaffold-only; Python 3.15 | Accepted |
+| 021 | Reserved: travel layer (PIOS-008) | Not written |
+| [022](https://app.notion.com/p/40d89370d49781ac9d98fc0659eeb0f5) | Modular-monolith Core plus independently deployed algo execution service; PIOS authorizes, algo executes (Notion only) | Accepted 2026-11-03 |
+
+The algo subsystem has its own series, ADR-PIOS-ALGO-001–019, mapped in the [pios-algo Architecture Baseline](https://app.notion.com/p/40c89370d49781d7ac0dd8f959a7cb65) §14. ALGO-009 (amended 2026-11-14) sets the language per component; ALGO-019 puts all UI in PIOS.

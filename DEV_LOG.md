@@ -30,3 +30,25 @@ Will spotted it missing from the plan. It exists only as a Notion open item (202
 ### Known limitations
 - Only checked on Windows so far. Neither CI pipeline has run: there is no remote yet, and the Jenkinsfile has no job.
 - `aiosqlite` and `asyncpg` are not dependencies yet: the stubs import no driver. Both have Python 3.15 support on PyPI (checked 2026-10-31).
+
+## Language scaffold and pios-fe split
+**Date:** 2026-11-14 to 2026-11-15  **Status:** Written, uncommitted. No PIOS code changed, so `scripts/check.sh` was not rerun.
+
+### Goal
+Close the drift between Notion, the repos and the hub after Will's ADR changes, and apply the ADR-PIOS-ALGO-009 amendment: each component uses its best-fit language from the start.
+
+### Changes
+- `README.md`: language table (Python Core and algo, C++ compute in `pios/algo/compute`, Angular UI in the separate `pios-fe` repo, Java in `terra-api`, SQL, JSON Schema/OpenAPI, Terraform at `pios/algo/infra/terraform`, Pine in `will-strategies/pine`), the rule "C++ computes, Python decides", the ADR-022 intro wording (PIOS authorizes, `pios/algo` executes), updated subtree and remote sections.
+- `scripts/task.sh`: one entry point, `bash scripts/task.sh <core|algo|compute> <build|test|lint|run>`; anything not wired yet exits 2. CI still calls `scripts/check.sh`.
+- `contracts/README.md`: new. Languages meet only through contracts; the envelope schema stays in `pios/algo/schemas/` until the consolidation cutover; `pios-fe` generates its TypeScript client from the published OpenAPI spec.
+- `docs/adr/README.md`: rows for 021 (reserved, travel) and 022, and a note on the ADR-PIOS-ALGO series. `ADR-016`: cross-reference to ADR-022.
+- `TASKS.md`: PIOS-004 Done (Bitbucket), PIOS-005 Done with the §9 acceptance gate still open.
+
+### Decisions (Will)
+- The UI gets its own repo, `pios-fe`, the same model as terra-api-fe: built by Core's pipeline and served same-origin by FastAPI. A `frontend/` folder created earlier this session was removed (never committed). Rejected: keeping the UI inside the Python repo, which mixes the Node toolchain into Core's CI.
+- From 2026-11-15 Will drives: he sets up, builds, runs and commits; Claude reviews and writes only on approval.
+
+### Known limitations / next
+- `pios/algo/compute` only arrives with the next subtree pull, after pios-algo is pushed.
+- CI is GitHub Actions on a Bitbucket repo, so it cannot run. Decision pending (Pipelines vs check script).
+- `pios-fe` has no git or remote yet; the Angular app is not generated.
