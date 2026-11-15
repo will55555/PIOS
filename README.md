@@ -76,4 +76,4 @@ The standalone pios-algo repo stays canonical until the protocol's acceptance ga
 
 ## Remote
 
-Bitbucket `terra-inc-dev/pios` (`origin`). The `pios-algo` remote points at `terra-inc-dev/pios-algo` for subtree pulls.
+GitHub `will55555/pios` (`origin`). The `pios-algo` remote points at `will55555/pios-algo` for subtree pulls. Bitbucket `terra-inc-dev/*` remains as the `bitbucket` remote, no longer pushed.

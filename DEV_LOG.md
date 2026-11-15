@@ -52,3 +52,10 @@ Close the drift between Notion, the repos and the hub after Will's ADR changes, 
 - `pios/algo/compute` only arrives with the next subtree pull, after pios-algo is pushed.
 - CI is GitHub Actions on a Bitbucket repo, so it cannot run. Decision pending (Pipelines vs check script).
 - `pios-fe` has no git or remote yet; the Angular app is not generated.
+
+## Moved to GitHub
+**Date:** 2026-11-15  **Status:** Pushed (`main` `4ca9cf5`).
+
+- `origin` → `https://github.com/will55555/pios.git` (private); the `pios-algo` subtree remote → `https://github.com/will55555/pios-algo.git`; Bitbucket kept as `bitbucket`, no longer pushed. History and the subtree link are unchanged: only URLs moved.
+- Why: the existing `.github/workflows/ci.yml` (ubuntu, `scripts/check.sh`) could not run on Bitbucket. It now runs on every push. It tests only `tests/` (pytest `testpaths`); `pios/algo` is tested by pios-algo's own workflow, so nothing runs twice.
+- README Remote section, TASKS PIOS-004 and the Consolidation Protocol hosting note updated. The 2026-11-05 execution record keeps its Bitbucket URLs as history.
